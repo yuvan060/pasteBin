@@ -1,29 +1,23 @@
 const DEFAULT_INTERVAL_MS = 10 * 60 * 1000; // 10 minutes
 
-function getBaseUrlFromEnv(port) {
+export function startHealthCheckScheduler(
+  intervalMs = Number(process.env.HEALTH_SCHEDULER_INTERVAL_MS) ||
+    DEFAULT_INTERVAL_MS
+) {
   const envBase =
     process.env.frontendbaseurl ||
     process.env.FRONTEND_BASE_URL ||
     process.env.FRONTENDBASEURL;
-  if (!envBase) return `http://localhost:${port}`;
 
-  let base = envBase.replace(/\/+$|\/+$/g, "");
-
-  if (!/^[a-zA-Z][a-zA-Z0-9+.-]*:\/\//.test(base)) {
-    if (base.startsWith("/")) base = `http://localhost:${port}${base}`;
-    else base = `http://${base}`;
+  if (!envBase) {
+    console.error(
+      '[health-scheduler] No frontend base URL found in env; scheduler disabled.'
+    );
+    return () => {};
   }
 
-  return base.replace(/\/+$/, "");
-}
-
-export function startHealthCheckScheduler(
-  port,
-  intervalMs = Number(process.env.HEALTH_SCHEDULER_INTERVAL_MS) ||
-    DEFAULT_INTERVAL_MS
-) {
-  const base = getBaseUrlFromEnv(port);
-  const url = `${base.replace(/\/+$/, "")}/api/healthz`;
+  const base = envBase.replace(/\/+$/, '');
+  const url = `${base}/api/healthz`;
   let timerId;
 
   async function check() {
