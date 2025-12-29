@@ -1,0 +1,17 @@
+{
+  "name": "pastebin-lite-node",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "helmet": "^7.1.0",
+    "nanoid": "^5.0.7",
+    "redis": "^4.7.0"
+  }
+}
